@@ -1,5 +1,3 @@
-# vigenere cipher
-
 import random
 alphabet = " !\"#$%&'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}`"
 users = ["gkim3783", "lara_chunko"]
@@ -17,7 +15,7 @@ def salting():
 
 def find_salt(key):
     for name in users:
-        if name == keyword:
+        if name == key:
             nth_term = int(users.index(key))
     salt_string = salt[nth_term]
     return salt_string 
@@ -40,55 +38,59 @@ def decrypt(ciphertext, key):
         plaintext += chr(value + 32)
     return plaintext
 
-def hashinginput(originaltext):
-    if len(originaltext) > 30:
+def hashinginput(username, password):
+    if len(password) > 30:
         print("Password can be 30 characters maximum.")
         newtext = ""
     else:
-        newtext = originaltext + find_salt(keyword) 
+        newtext = password + find_salt(username) 
     return newtext
 
 def get_correct_hash(key): 
     for name in users:
-        if name == keyword:
+        if name == key:
             nth_term = int(users.index(key))
     correct_hash = hash_list[nth_term]
     return correct_hash
 
-
-variable = str(input("new user or login or pass: "))
-if variable == "login":
+def login():
     keyword = str(input("username = "))
     originaltext = str(input("password = "))
-    combinedtext = hashinginput(originaltext)
+    combinedtext = hashinginput(keyword, originaltext)
     hash = encrypt(combinedtext, keyword)
     correct_hash = get_correct_hash(keyword)
     if hash == correct_hash:
-        print("Welcome, " + keyword)
+        return True
     if hash != correct_hash:
-        print("Login information is wrong. Please try again.")
-
-elif variable == "new user":
+        return False
+    
+def new_user():
     keyword = str(input("enter your new username: "))
     for name in users:
         if name == keyword:
             print("This username has already been taken.")
             raise SystemExit() #https://community.activestate.com/forum/using-python-how-do-i-terminate-stop-execution-my-script
         else:
-            users.append(keyword) 
-            new_salt = str(salt)
-            salt.append(new_salt) 
-            originaltext = str(input("enter your new password: "))
-            combinedtext = originaltext + new_salt
-            new_hash = str(encrypt(combinedtext, keyword))
-            hash_list.append(new_hash)
-            print(users)
-            print(salt)
-            print(hash_list) 
-    
+            print("Your new account information is saved.")  
+    users.append(keyword) 
+    new_salt = str(salt)
+    salt.append(new_salt) 
+    originaltext = str(input("enter your new password: "))
+    combinedtext = originaltext + new_salt
+    new_hash = str(encrypt(combinedtext, keyword))
+    hash_list.append(new_hash)
+    print(users)
+    print(salt)
+    print(hash_list)
+
+
+variable = str(input("new user or login or pass: "))
+if variable == "login":
+    print(login()) 
+elif variable == "new user":
+    print(new_user())
 elif variable == "pass":
     print(users)
     print(salt)
     print(hash_list) 
 
-      
