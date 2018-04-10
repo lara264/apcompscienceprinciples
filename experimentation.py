@@ -1,5 +1,3 @@
-# vigenere cipher
-
 import random
 alphabet = " !\"#$%&'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}`"
 
@@ -81,8 +79,9 @@ elif variable == "new user":
             print("This username has already been taken.")
             raise SystemExit() #https://community.activestate.com/forum/using-python-how-do-i-terminate-stop-execution-my-script
         else:
-            with open('usernames.txt', 'a') as f:
-                f.write(keyword + "\n")  
+            pass 
+    with open('usernames.txt', 'a') as f:
+        f.write(keyword + "\n")  
     originaltext = str(input("enter your new password: "))
     if len(originaltext) > 30:
         print("Passwords cannot be more than 30 characters.")
