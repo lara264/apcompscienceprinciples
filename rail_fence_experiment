@@ -1,0 +1,30 @@
+# rail fence cipher
+
+username = str(input("enter username: "))
+password = str(input("enter password: "))
+salt = str(input("enter salt: ")) 
+combinedtext = password + salt
+
+
+def encrypt(string):
+    list1 = ""
+    list2 = ""
+    list3 = ""
+    i = 0
+    for i in range(len(combinedtext)-1):
+        if i % 2 == 1:
+            list2 += combinedtext[i]
+            i += 1
+        elif i % 4 == 0:
+            list1 += combinedtext[i]
+            i += 1
+        else:
+            list3 += combinedtext[i]
+            i += 1
+    encryption = list1 + list2 + list3
+    return encryption
+
+print(combinedtext)
+encryptedcode = encrypt(combinedtext)
+print(encryptedcode) 
+        
