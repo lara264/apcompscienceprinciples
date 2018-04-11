@@ -10,7 +10,7 @@ with open('salts.txt', 'r') as f:
 with open('hashes.txt', 'r') as f:
     hash = f.read().splitlines()
     
-def salting():
+def salting(originaltext):
     n = 0
     salt = ""
     while n < (30 - len(originaltext)):
@@ -44,12 +44,12 @@ def decrypt(ciphertext, key):
         plaintext += chr(value + 32)
     return plaintext
 
-def hashinginput(originaltext):
-    if len(originaltext) > 30:
+def hashinginput(password, username):
+    if len(password) > 30:
         print("Password can be 30 characters maximum.")
         newtext = ""
     else:
-        newtext = originaltext + find_salt(keyword) 
+        newtext = password + find_salt(username) 
     return newtext
 
 def get_correct_hash(key): 
@@ -59,11 +59,10 @@ def get_correct_hash(key):
     correct_hash = hash[nth_term]
     return correct_hash
 
-variable = str(input("new user or login or pass: "))
-if variable == "login":
+def login():
     keyword = str(input("username = "))
     originaltext = str(input("password = "))
-    combinedtext = hashinginput(originaltext)
+    combinedtext = hashinginput(originaltext, keyword)
     hasher = encrypt(combinedtext, keyword)
     correct_hash = get_correct_hash(keyword)
     if hasher == correct_hash:
@@ -71,8 +70,7 @@ if variable == "login":
     if hasher != correct_hash:
         print("Login information is wrong. Please try again.")
 
-
-elif variable == "new user":
+def new_user():
     keyword = str(input("enter your new username: "))
     for name in users:
         if name == keyword:
@@ -88,7 +86,7 @@ elif variable == "new user":
         raise SystemExit()
     else:
         pass
-    new_salt = str(salting())
+    new_salt = str(salting(originaltext))
     with open('salts.txt', 'a') as f:
         f.write(new_salt + "\n") 
     combinedtext = originaltext + new_salt
@@ -96,6 +94,11 @@ elif variable == "new user":
     with open('hashes.txt', 'a') as f:
         f.write(new_hash+ "\n") 
 
+variable = str(input("new user or login or pass: "))
+if variable == "login":
+    login() 
+elif variable == "new user":
+    new_user() 
 elif variable == "pass":
     print(users)
     print(salt)
