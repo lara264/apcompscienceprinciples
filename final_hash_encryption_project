@@ -1,0 +1,105 @@
+import random
+alphabet = " !\"#$%&'-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}`"
+
+with open('usernames.txt', 'r') as f:
+    users = f.read().splitlines()
+
+with open('salts.txt', 'r') as f:
+    salt = f.read().splitlines()
+
+with open('hashes.txt', 'r') as f:
+    hash = f.read().splitlines()
+    
+def salting(originaltext):
+    n = 0
+    salt = ""
+    while n < (30 - len(originaltext)):
+        random_character = random.choice(alphabet)
+        salt += random_character
+        n += 1
+    return salt
+
+def find_salt(key):
+    for name in users:
+        if name == key:
+            nth_term = int(users.index(key))
+    salt_string = salt[nth_term]
+    return salt_string 
+
+def encrypt(string):
+    list1 = ""
+    list2 = ""
+    list3 = ""
+    i = 0
+    for i in range(len(string)-1):
+        if i % 2 == 1:
+            list2 += string[i]
+            i += 1
+        elif i % 4 == 0:
+            list1 += string[i]
+            i += 1
+        else:
+            list3 += string[i]
+            i += 1
+    encryption = list1 + list2 + list3
+    return encryption
+
+def hashinginput(password, username):
+    if len(password) > 30:
+        print("Password can be 30 characters maximum.")
+        newtext = ""
+    else:
+        newtext = password + find_salt(username) 
+    return newtext
+
+def get_correct_hash(key): 
+    for name in users:
+        if name == key:
+            nth_term = int(users.index(key))
+    correct_hash = hash[nth_term]
+    return correct_hash
+
+def login():
+    keyword = str(input("username = "))
+    originaltext = str(input("password = "))
+    combinedtext = hashinginput(originaltext, keyword)
+    hasher = encrypt(combinedtext)
+    correct_hash = get_correct_hash(keyword)
+    if hasher == correct_hash:
+        print("Welcome, " + keyword)
+    if hasher != correct_hash:
+        print("Login information is wrong. Please try again.")
+
+def new_user():
+    keyword = str(input("enter your new username: "))
+    for name in users:
+        if name == keyword:
+            print("This username has already been taken.")
+            raise SystemExit() #https://community.activestate.com/forum/using-python-how-do-i-terminate-stop-execution-my-script
+        else:
+            pass 
+    with open('usernames.txt', 'a') as f:
+        f.write(keyword + "\n")  
+    originaltext = str(input("enter your new password: "))
+    if len(originaltext) > 30:
+        print("Passwords cannot be more than 30 characters.")
+        raise SystemExit()
+    else:
+        pass
+    new_salt = str(salting(originaltext))
+    with open('salts.txt', 'a') as f:
+        f.write(new_salt + "\n") 
+    combinedtext = originaltext + new_salt
+    new_hash = str(encrypt(combinedtext))
+    with open('hashes.txt', 'a') as f:
+        f.write(new_hash+ "\n") 
+
+variable = str(input("new user or login or pass: "))
+if variable == "login":
+    login() 
+elif variable == "new user":
+    new_user() 
+elif variable == "pass":
+    print(users)
+    print(salt)
+    print(hash) 
